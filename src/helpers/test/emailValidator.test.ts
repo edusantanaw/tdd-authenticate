@@ -3,13 +3,13 @@ import { EmailValidatorSpy } from "../../__mocks__/emailValidatorspy";
 jest.mock('validator')
 
 describe('Email validator', () => {
-    test('', () => {
+    test('Should return true if an valid email is provided', () => {
         const emailValidator = new EmailValidatorSpy()
         emailValidator.isEmailValid = true
         const isValid = emailValidator.isValid('valid@email.com')
         expect(isValid).toBe(true)
     })
-    test('', () => {
+    test('Should return true if an invalid email is provided', () => {
         const emailValidator = new EmailValidatorSpy()
         emailValidator.isEmailValid = false
         const isValid = emailValidator.isValid('invalid')
