@@ -1,47 +1,12 @@
-import httpReponse from "../helpers/errors/httpReponse"
-import { emailValidator } from "../protocols/helpers/emailValidator"
-import { EmailValidatorSpy } from "../__mocks__/emailValidatorspy"
 
-
-interface authUsecase {
-    auth: (email: string, password: string) => Promise<{ accessToken: string, user: any }>
-}
-class AuthUsecase {
-    async auth(email: string, password: string) {
-
-        const user = ''
-        if (!user) throw 'user not found'
-        return {
-            accessToken: 'accessToken',
-            user: 'user'
-        }
-    }
-}
-
-class SigninController {
-    constructor(private emailValidator: emailValidator, private authUsecase: authUsecase) { }
-
-    async handle(email: string, password: string) {
-        try {
-            if (!email) return httpReponse.badRequest("Email is required!")
-            if (!password) return httpReponse.badRequest('Password is required!')
-            if (!this.emailValidator.isValid(email)) return httpReponse.badRequest('Email is invalid!')
-            const { accessToken, user } = await this.authUsecase.auth(email, password)
-            return {
-                statusCode: 200,
-                body: { accessToken, user }
-            }
-        } catch (error) {
-            return httpReponse.catch(error)
-        }
-    }
-}
-
+import { AuthUsecaseSpy } from "../mocks/authUsecase"
+import { EmailValidatorSpy } from "../mocks/emailValidatorspy"
+import { SigninController } from "./signin.controller"
 
 const makeSut = () => {
 
     const emailValidatorSpy = new EmailValidatorSpy()
-    const authUsecase = new AuthUsecase()
+    const authUsecase = new AuthUsecaseSpy()
     const signiController = new SigninController(emailValidatorSpy, authUsecase)
     return { signiController, emailValidatorSpy, authUsecase }
 }
@@ -69,8 +34,30 @@ describe('Signin', () => {
         expect(response.statusCode).toBe(400)
         expect(response.body).toEqual('Email is invalid!')
     })
+    test('Should throw if user not found', async () => {
+        const { signiController } = makeSut()
+        const response = await signiController.handle('valid_email@email.com', 'valid_password')
+        expect(response.statusCode).toBe(400)
+        expect(response.body).toBe('User not found!')
+    })
+    test('Should throw if an wrong password is provided', async () => {
+        const { authUsecase, emailValidatorSpy } = makeSut()
+        authUsecase.user = 'user'
+        const signiController = new SigninController(emailValidatorSpy, authUsecase)
+        const response = await signiController.handle('valid_email@email.com', 'invalid_password')
+        expect(response.statusCode).toBe(400)
+        expect(response.body).toBe('Password is invalid!')
+    })
 
-    test('Should throw if user not found!', () => {
-
+    test('Should return an access token and user if user found!', async () => {
+        const { authUsecase, emailValidatorSpy } = makeSut()
+        authUsecase.user = 'user'
+        const signiController = new SigninController(emailValidatorSpy, authUsecase)
+        const response = await signiController.handle('valid_email@email.com', 'valid_password')
+        expect(response.statusCode).toBe(200)
+        expect(response.body).toEqual({
+            accessToken: 'accessToken',
+            user: 'user'
+        })
     })
 })
