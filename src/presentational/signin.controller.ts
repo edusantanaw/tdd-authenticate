@@ -1,4 +1,4 @@
-import httpReponse from "../helpers/errors/httpReponse"
+import httpReponse from "../helpers/httpReponse"
 import { emailValidator } from "../protocols/helpers/emailValidator"
 import { authUsecase } from "../protocols/useCases/authUseCase"
 
@@ -12,10 +12,10 @@ export class SigninController {
             if (!password) return httpReponse.badRequest('Password is required!')
             if (!this.emailValidator.isValid(email)) return httpReponse.badRequest('Email is invalid!')
             const { accessToken, user } = await this.authUsecase.auth(email, password)
-            return {
-                statusCode: 200,
-                body: { accessToken, user }
-            }
+            return httpReponse.success({
+                accessToken,
+                user
+            })
         } catch (error) {
             return httpReponse.catch(error)
         }

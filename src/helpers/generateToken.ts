@@ -5,5 +5,4 @@ export class GenerateToken {
         const token = jwt.sign(userId, key)
         return token
     }
-
 }

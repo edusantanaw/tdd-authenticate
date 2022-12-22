@@ -1,14 +1,10 @@
+import { AuthUsecaseSpy } from "../../mocks/authUsecase"
+import { userRepository } from "../../protocols/repository/userRepository"
 import { authUsecase } from "../../protocols/useCases/authUseCase"
+import { UserRepositoryMemory } from "../../test/repository/inMemoryRepo"
 
-interface user {
-    id: string;
-    email: string;
-    password: string;
-}
 
-interface userRepository {
-    load: (email: string) => Promise<user>
-}
+
 
 
 class AuthUseCase implements authUsecase {
@@ -17,7 +13,7 @@ class AuthUseCase implements authUsecase {
 
     async auth(email: string, password: string) {
 
-        const user = await this.userRepository.load(email)
+        const user = await this.userRepository.loadByEmail(email)
         if (!user) throw 'User not found!'
 
 
@@ -29,8 +25,19 @@ class AuthUseCase implements authUsecase {
 }
 
 
-describe('Auth use case', () => {
-    test('', () => {
 
+const makeSut = () => {
+    const userRepository = new UserRepositoryMemory()
+    const authUseCase = new AuthUseCase(userRepository)
+    return { authUseCase }
+}
+
+
+describe('Auth use case', () => {
+    test('Should throw if user not found!', async () => {
+        const authUseCase = new AuthUsecaseSpy()
+        authUseCase.user = null
+        const response = authUseCase.auth('valid_email@email.com', 'valid_password')
+        expect(response).rejects.toThrow()
     })
 })

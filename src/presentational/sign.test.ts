@@ -42,7 +42,7 @@ describe('Signin', () => {
     })
     test('Should throw if an wrong password is provided', async () => {
         const { authUsecase, emailValidatorSpy } = makeSut()
-        authUsecase.user = 'user'
+        authUsecase.user = { id: 'any_id', email: 'valid_email@email.com', password: 'valid_password', name: 'any_name' }
         const signiController = new SigninController(emailValidatorSpy, authUsecase)
         const response = await signiController.handle('valid_email@email.com', 'invalid_password')
         expect(response.statusCode).toBe(400)
@@ -51,7 +51,7 @@ describe('Signin', () => {
 
     test('Should return an access token and user if user found!', async () => {
         const { authUsecase, emailValidatorSpy } = makeSut()
-        authUsecase.user = 'user'
+        authUsecase.user = { id: 'any_id', email: 'valid_email@email.com', password: 'valid_password', name: 'any_name' }
         const signiController = new SigninController(emailValidatorSpy, authUsecase)
         const response = await signiController.handle('valid_email@email.com', 'valid_password')
         expect(response.statusCode).toBe(200)

@@ -18,11 +18,12 @@
     "start": "node ./build/index.js",
     "build": "tsc -p .",
     "dev": "ts-node-dev --exit-child --transpile-only --ignore-watch node_modules ./src/main/index.ts",
-    "test": "jest"
+    "test": "jest -w"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
     "jsonwebtoken": "^9.0.0",
+    "uuid": "^9.0.0",
     "validator": "^13.7.0"
   }
 }

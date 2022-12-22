@@ -1,5 +1,7 @@
+import { user } from "../protocols/entity/user"
+
 export class AuthUsecaseSpy {
-    user = ''
+    user: user | null = null
     userPassword = 'valid_password'
     async auth(email: string, password: string) {
         this.user
