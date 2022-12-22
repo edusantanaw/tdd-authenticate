@@ -46,7 +46,7 @@ describe('Signin', () => {
         const signiController = new SigninController(emailValidatorSpy, authUsecase)
         const response = await signiController.handle('valid_email@email.com', 'invalid_password')
         expect(response.statusCode).toBe(400)
-        expect(response.body).toBe('Password is invalid!')
+        expect(response.body).toBe('Email/password is invalid!')
     })
 
     test('Should return an access token and user if user found!', async () => {

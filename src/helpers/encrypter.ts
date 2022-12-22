@@ -1,9 +1,7 @@
 import bcrypt from 'bcrypt'
+import { encrypter } from '../protocols/helpers/encrypter'
 
-interface encrypter {
-    genHash: (password: string) => Promise<string>
-    compare: (password: string, userPassword: string) => Promise<boolean>
-}
+
 
 
 export class Encrypter implements encrypter {
