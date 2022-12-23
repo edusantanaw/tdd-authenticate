@@ -12,6 +12,20 @@ class HttpReponse {
         }
     }
 
+    notFound(error: string) {
+        return {
+            statusCode: 401,
+            body: error
+        }
+    }
+
+    notAuthorized(error: string) {
+        return {
+            statusCode: 401,
+            body: error
+        }
+    }
+
     catch(error: unknown) {
         return {
             statusCode: 400,

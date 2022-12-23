@@ -21,7 +21,6 @@ export class UserRepositoryMemory implements userRepository {
 
     async loadByEmail(email: string) {
         const userResponse = this.items.filter((userrep) => userrep.email === email)
-        console.log(userResponse)
         return userResponse[0]
     }
 }

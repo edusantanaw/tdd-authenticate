@@ -14,14 +14,14 @@ const makeSut = () => {
 describe('Signin', () => {
     test('Should return an error if no emails is provided', async () => {
         const { signiController } = makeSut()
-        const response = await signiController.handle('', 'valid_password')
+        const response = await signiController.handle({ email: '', password: 'valid_password' })
         expect(response.statusCode).toBe(400)
         expect(response.body).toEqual('Email is required!')
     })
 
     test('Should return an error if no password is provided', async () => {
         const { signiController } = makeSut()
-        const response = await signiController.handle('valid_email@email.com', '')
+        const response = await signiController.handle({ email: 'valid_email@email.com', password: '' })
         expect(response.statusCode).toBe(400)
         expect(response.body).toEqual('Password is required!')
     }
@@ -30,13 +30,13 @@ describe('Signin', () => {
         const { emailValidatorSpy, authUsecase } = makeSut()
         emailValidatorSpy.isEmailValid = false
         const signiController = new SigninController(emailValidatorSpy, authUsecase)
-        const response = await signiController.handle('invalid_email', 'valid_password')
+        const response = await signiController.handle({ email: 'invalid_email', password: 'valid_password' })
         expect(response.statusCode).toBe(400)
         expect(response.body).toEqual('Email is invalid!')
     })
     test('Should throw if user not found', async () => {
         const { signiController } = makeSut()
-        const response = await signiController.handle('valid_email@email.com', 'valid_password')
+        const response = await signiController.handle({ email: 'any@email.com', password: 'valid_password' })
         expect(response.statusCode).toBe(400)
         expect(response.body).toBe('User not found!')
     })
@@ -44,7 +44,7 @@ describe('Signin', () => {
         const { authUsecase, emailValidatorSpy } = makeSut()
         authUsecase.user = { id: 'any_id', email: 'valid_email@email.com', password: 'valid_password', name: 'any_name' }
         const signiController = new SigninController(emailValidatorSpy, authUsecase)
-        const response = await signiController.handle('valid_email@email.com', 'invalid_password')
+        const response = await signiController.handle({ email: 'valid_email@email.com', password: 'invalid_password' })
         expect(response.statusCode).toBe(400)
         expect(response.body).toBe('Email/password is invalid!')
     })
@@ -53,7 +53,7 @@ describe('Signin', () => {
         const { authUsecase, emailValidatorSpy } = makeSut()
         authUsecase.user = { id: 'any_id', email: 'valid_email@email.com', password: 'valid_password', name: 'any_name' }
         const signiController = new SigninController(emailValidatorSpy, authUsecase)
-        const response = await signiController.handle('valid_email@email.com', 'valid_password')
+        const response = await signiController.handle({ email: 'valid_email@email.com', password: 'valid_password' })
         expect(response.statusCode).toBe(200)
         expect(response.body).toEqual({
             accessToken: 'accessToken',
